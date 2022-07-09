@@ -1,10 +1,13 @@
 CREATE TABLE GuildMember(
 
     -- Columns --
-    GuildId VARCHAR(16) NOT NULL,
-    MemberId VARCHAR(16) NOT NULL
+    GuildId CHAR(18) NOT NULL,
+    MemberId CHAR(18) NOT NULL,
+    IsOwner BIT NOT NULL
 
-    -- Key --
-    CONSTRAINT PK_GuildMember PRIMARY KEY(GuildId, MemberId)
+    -- Keys --
+    CONSTRAINT PK_GuildMember PRIMARY KEY(GuildId, MemberId),
+    CONSTRAINT FK_GuildMember_Guild FOREIGN KEY(GuildId) REFERENCES Guild(Id),
+    CONSTRAINT FK_GuildMember_User FOREIGN KEY(MemberId) REFERENCES [User](Id),
 
 )
