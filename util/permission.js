@@ -1,10 +1,10 @@
-const mssql = require('mssql');
+const {ConnectionPool} = require('mssql');
 
 module.exports = {
 
     /**
      * 
-     * @param {mssql.ConnectionPool} con 
+     * @param {ConnectionPool} con 
      * @param {string} permissionLevel 
      * @param {string} user 
      * 
@@ -13,6 +13,8 @@ module.exports = {
     async checkPermissions(con, permissionLevel, user) {
 
         return new Promise((resolve, reject) => {
+
+            // Generic permission - Just let them through
             if (permissionLevel == 'all') {
                 resolve(true);
             }

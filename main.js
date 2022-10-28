@@ -1,21 +1,20 @@
-const { Client, Intents, Collection } = require("discord.js");
-const { TOKEN, SQL } = require("./config.json");
+const { Client, GatewayIntentBits, Collection } = require("discord.js");
+const { TOKEN, SQL_ADMIN } = require("./config.json");
 const fs = require("fs");
-const mssql = require("mssql");
+const {ConnectionPool} = require("mssql");
 const Perms = require("./util/permission.js");
 
 // Holy crap that's a lot of intention :flushed:
 const intent_flags = [
-	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-	Intents.FLAGS.GUILD_MEMBERS,
-	Intents.FLAGS.GUILD_MESSAGES,
-	Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-	Intents.FLAGS.GUILD_MESSAGE_TYPING,
-	Intents.FLAGS.GUILD_PRESENCES,
-	Intents.FLAGS.DIRECT_MESSAGES,
-	Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
-	Intents.FLAGS.DIRECT_MESSAGE_TYPING,
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.DirectMessages,
+	GatewayIntentBits.GuildBans,
+	GatewayIntentBits.GuildEmojisAndStickers,
+	GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildMessageReactions,
+	GatewayIntentBits.GuildMessageTyping,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.MessageContent
 ];
 
 const client = new Client({ intents: intent_flags });
@@ -24,8 +23,8 @@ const client = new Client({ intents: intent_flags });
   Log in to database
 */
 console.log(`[Startup]: Requesting database connection`);
-const pool = new mssql.ConnectionPool(SQL);
-/**@type {mssql.ConnectionPool} */
+const pool = new ConnectionPool(SQL_ADMIN);
+/**@type {ConnectionPool} */
 var con;
 pool.connect()
 	.then((conPool) => {
@@ -134,7 +133,7 @@ client.on("interactionCreate", (interaction) => {
 	Perms.checkPermissions(con, smCommand.data.permissions, interaction.user.id).then((result) => {
 
 		// In permissions callback, either execute or no permission error and return
-		if (result == true) {
+		if (result === true) {
 			try {
 				smCommand.btnExecute(interaction, con);
 				console.log(`SelectMenu handled`);
